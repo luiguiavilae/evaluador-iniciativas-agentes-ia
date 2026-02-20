@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.Python
+venv/
+env/
+.env
+
+# Datos generados (se crean en runtime)
+data/historial_evaluaciones.json
+data/resumen_evaluaciones.csv
+
+# Reportes generados
+reports/*.md
+reports/*.pdf
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDEs
+.vscode/
+.idea/
+*.cursor
+
+# Distribución / packaging
+dist/
+build/
+*.egg-info/

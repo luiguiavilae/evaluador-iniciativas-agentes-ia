@@ -1,0 +1,20 @@
+# ── Dependencias principales ───────────────────────────────────────────────────
+# No requiere dependencias externas para la funcionalidad core.
+# El agente corre 100% con Python estándar (stdlib).
+
+# ── Dependencias opcionales para exportar PDF ─────────────────────────────────
+# Instalar solo si deseas exportar reportes en formato PDF:
+#
+#   pip install weasyprint markdown
+#
+# weasyprint: convierte HTML a PDF (requiere GTK en Linux/Windows)
+# markdown:   convierte Markdown a HTML para el paso intermedio
+#
+# Alternativa sin instalación: el reporte .md puede convertirse a PDF en:
+#   - https://md2pdf.netlify.app/
+#   - VSCode con extensión "Markdown PDF"
+#   - Pandoc (si está instalado en el sistema)
+
+# Opcional para PDF
+# weasyprint>=60.0
+# markdown>=3.5
