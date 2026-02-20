@@ -57,6 +57,12 @@ ALTERNATIVAS = {
         "cuando": "El problema se origina en falta de conocimiento o inconsistencia en cómo se ejecuta el proceso.",
         "herramientas": ["Notion", "Confluence", "Loom (videos de proceso)", "SOPs documentados"]
     },
+    "definir_kpis": {
+        "nombre": "Definición de KPIs y caso de negocio primero",
+        "descripcion": "Antes de construir cualquier solución tecnológica, el equipo debe definir qué indicadores medirá, cuál es la línea base actual y cuánto vale mejorarlos. Sin esto, cualquier iniciativa (agente o no) carece de criterio de éxito.",
+        "cuando": "No están claros los indicadores de negocio que la iniciativa debe mover.",
+        "herramientas": ["Business Case Canvas", "OKRs", "DACI framework", "Hoja de cálculo de ROI simple"]
+    },
 }
 
 
@@ -143,43 +149,44 @@ def _detectar_alertas(resultados_categorias: list) -> list:
     """Detecta señales de alerta específicas basadas en respuestas críticas."""
     alertas = []
 
+    # Mapa: {pregunta_id: {respuesta: mensaje_alerta}}
+    ALERTAS_MAPA = {
+        "p2_1": {  # KPI definido
+            "C": "⚠️  ALERTA DE ESTRATEGIA: No hay un KPI concreto que el agente deba impactar. Sin un indicador de éxito definido, no podrás medir el retorno ni justificar la inversión. Define primero qué métrica vas a mover."
+        },
+        "p2_3": {  # Valor económico del KPI
+            "C": "⚠️  ALERTA DE ROI: No se ha calculado el valor económico del impacto. Sin este dato es imposible priorizar esta iniciativa frente a otras o aprobar presupuesto."
+        },
+        "p2_4": {  # Tiempo para ver impacto en KPIs
+            "D": "⚠️  ALERTA DE VALOR: No está claro cuándo ni cómo se vería el impacto en los indicadores. Iniciativas sin horizonte de valor definido tienen alta probabilidad de ser canceladas."
+        },
+        "p3_3": {  # Tolerancia al error (antes p2_3)
+            "C": "⚠️  ALERTA CRÍTICA: El proceso tiene alto impacto ante errores. Un agente autónomo puede generar consecuencias graves. Se requiere supervisión humana constante o descartar el agente."
+        },
+        "p4_1": {  # Disponibilidad de datos (antes p3_1)
+            "C": "⚠️  ALERTA DE DATOS: Sin datos digitalizados y accesibles, ningún sistema de IA funcionará. Resuelve primero la calidad y acceso a datos."
+        },
+        "p4_2": {  # Capacidad técnica (antes p3_2)
+            "C": "⚠️  ALERTA TÉCNICA: Sin capacidad técnica interna, el agente generará dependencia total de terceros y riesgo operacional alto."
+        },
+        "p6_2": {  # Resistencia del equipo (antes p5_2)
+            "C": "⚠️  ALERTA DE ADOPCIÓN: Alta resistencia del equipo puede hacer fracasar el proyecto. Gestionar el cambio antes de construir."
+        },
+    }
+
+    # Construir índice de texto → id de pregunta
+    texto_a_id = {}
+    for p_cat in CATEGORIAS:
+        for p in p_cat["preguntas"]:
+            texto_a_id[p["texto"]] = p["id"]
+
     for cat in resultados_categorias:
         for preg in cat["preguntas"]:
-            pid_map = {
-                "p2_3": {  # Tolerancia al error
-                    "C": "⚠️  ALERTA CRÍTICA: El proceso tiene alto impacto ante errores. Un agente autónomo en este contexto puede generar consecuencias graves. Se requiere supervisión humana constante."
-                },
-                "p3_1": {  # Disponibilidad de datos
-                    "C": "⚠️  ALERTA: Sin datos digitalizados y accesibles, el agente no puede operar. Primero se debe resolver la disponibilidad de datos."
-                },
-                "p3_2": {  # Capacidad técnica
-                    "C": "⚠️  ALERTA: Sin capacidad técnica interna, el agente dependerá 100% de terceros para mantenimiento, lo que genera riesgo operacional."
-                },
-                "p5_2": {  # Resistencia del equipo
-                    "C": "⚠️  ALERTA: La resistencia alta del equipo o usuarios externos puede hacer fracasar el proyecto independientemente de su calidad técnica."
-                },
-            }
-            if preg["pregunta"] and "id" in preg:
-                pass  # procesado abajo
-
-    # Procesamos por ID de pregunta
-    for cat in resultados_categorias:
-        for preg in cat["preguntas"]:
-            pregunta_id = None
-            for p_cat in CATEGORIAS:
-                for p in p_cat["preguntas"]:
-                    if p["texto"] == preg["pregunta"]:
-                        pregunta_id = p["id"]
-                        break
-
-            if pregunta_id == "p2_3" and preg["respuesta"] == "C":
-                alertas.append("⚠️  ALERTA CRÍTICA: El proceso tiene alto impacto ante errores. Un agente autónomo puede generar consecuencias graves. Se requiere supervisión humana constante o descartar el agente.")
-            elif pregunta_id == "p3_1" and preg["respuesta"] == "C":
-                alertas.append("⚠️  ALERTA DE DATOS: Sin datos digitalizados y accesibles, ningún sistema de IA funcionará. Resuelve primero la calidad y acceso a datos.")
-            elif pregunta_id == "p3_2" and preg["respuesta"] == "C":
-                alertas.append("⚠️  ALERTA TÉCNICA: Sin capacidad técnica interna, el agente generará dependencia total de terceros y riesgo operacional alto.")
-            elif pregunta_id == "p5_2" and preg["respuesta"] == "C":
-                alertas.append("⚠️  ALERTA DE ADOPCIÓN: Alta resistencia del equipo puede hacer fracasar el proyecto. Gestionar el cambio antes de construir.")
+            pregunta_id = texto_a_id.get(preg["pregunta"])
+            if pregunta_id and pregunta_id in ALERTAS_MAPA:
+                respuesta = preg["respuesta"]
+                if respuesta in ALERTAS_MAPA[pregunta_id]:
+                    alertas.append(ALERTAS_MAPA[pregunta_id][respuesta])
 
     return alertas
 
@@ -292,7 +299,11 @@ def _seleccionar_alternativas(cats_debiles: list) -> list:
     alternativas_seleccionadas = []
     ids_debiles = {c["id"] for c in cats_debiles}
 
-    # Siempre recomendar soluciones simples primero
+    # KPIs indefinidos → primero definir caso de negocio
+    if "kpis" in ids_debiles:
+        alternativas_seleccionadas.append(ALTERNATIVAS["definir_kpis"])
+
+    # Siempre recomendar soluciones simples como punto de partida
     alternativas_seleccionadas.append(ALTERNATIVAS["llm_simple"])
 
     if "problema" in ids_debiles:
@@ -301,7 +312,7 @@ def _seleccionar_alternativas(cats_debiles: list) -> list:
         alternativas_seleccionadas.append(ALTERNATIVAS["proceso_simple"])
 
     if "impacto" in ids_debiles:
-        # Bajo impacto → capacitación o dashboard
+        # Bajo impacto operacional → capacitación o dashboard
         alternativas_seleccionadas.append(ALTERNATIVAS["dashboard_bi"])
         alternativas_seleccionadas.append(ALTERNATIVAS["capacitacion"])
 

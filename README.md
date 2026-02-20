@@ -23,11 +23,12 @@ El agente evaluador:
 
 | # | Categoría | Peso | Qué evalúa |
 |---|-----------|------|------------|
-| 1 | 🔍 Naturaleza del Problema | 25% | Complejidad, no-linealidad, razonamiento requerido |
-| 2 | 💼 Impacto en el Negocio | 25% | Frecuencia, tiempo ahorrado, tolerancia al error, alcance |
-| 3 | ⚙️ Viabilidad Técnica | 20% | Datos disponibles, capacidad técnica, integraciones |
-| 4 | 🔄 Complejidad vs. Alternativas | 20% | Necesidad de contexto, adaptabilidad, intentos previos |
-| 5 | 🏢 Madurez Organizacional | 10% | Experiencia previa en IA, adopción del equipo |
+| 1 | 🔍 Naturaleza del Problema | 22% | Complejidad, no-linealidad, razonamiento requerido |
+| 2 | 📈 Indicadores de Negocio (KPIs) | 23% | KPIs impactados, tipo de indicador, valor económico, horizonte de retorno |
+| 3 | 💼 Impacto Operacional | 20% | Frecuencia, tiempo ahorrado, tolerancia al error, alcance |
+| 4 | ⚙️ Viabilidad Técnica | 18% | Datos disponibles, capacidad técnica, integraciones |
+| 5 | 🔄 Complejidad vs. Alternativas | 12% | Necesidad de contexto, adaptabilidad, intentos previos |
+| 6 | 🏢 Madurez Organizacional | 5% | Experiencia previa en IA, adopción del equipo |
 
 ---
 
@@ -116,6 +117,7 @@ Cuando la iniciativa **no amerita un agente**, el evaluador sugiere:
 
 | Alternativa | Cuándo usarla |
 |-------------|---------------|
+| Definición de KPIs y caso de negocio | No hay un indicador de éxito definido para la iniciativa |
 | Script / Función Python | Proceso repetitivo, pasos fijos, datos estructurados |
 | Workflow (n8n, Make, Zapier) | Múltiples pasos predecibles, sin IA necesaria |
 | RPA (UiPath, Power Automate) | Automatizar interfaces gráficas sin API |
@@ -136,4 +138,4 @@ Cuando la iniciativa **no amerita un agente**, el evaluador sugiere:
 
 ---
 
-*Evaluador de Iniciativas de Agentes de IA v1.0 · Lógica determinista · Sin costo de APIs · 100% Python estándar*
+*Evaluador de Iniciativas de Agentes de IA v1.1 · Lógica determinista · Sin costo de APIs · 100% Python estándar*

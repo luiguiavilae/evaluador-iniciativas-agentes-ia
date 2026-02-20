@@ -7,6 +7,15 @@ Basado en:
 - AWS: Agents vs Automation Strategic Guide
 - Dataiku: How to Select High-Impact AI Agent Use Cases
 - McKinsey: When can AI make good decisions
+- Gartner: AI Business Value Framework
+
+Pesos por categoría (deben sumar 1.0):
+  1. Naturaleza del Problema       → 0.22
+  2. Indicadores de Negocio (KPIs) → 0.23  ← nueva categoría
+  3. Impacto Operacional           → 0.20
+  4. Viabilidad Técnica            → 0.18
+  5. Complejidad vs. Alternativas  → 0.12
+  6. Madurez Organizacional        → 0.05
 """
 
 CATEGORIAS = [
@@ -14,7 +23,7 @@ CATEGORIAS = [
         "id": "problema",
         "nombre": "🔍 Categoría 1: Naturaleza del Problema",
         "descripcion": "Evaluamos qué tan complejo y adecuado es el problema para un agente de IA.",
-        "peso": 0.25,
+        "peso": 0.22,
         "preguntas": [
             {
                 "id": "p1_1",
@@ -59,13 +68,63 @@ CATEGORIAS = [
         ]
     },
     {
-        "id": "impacto",
-        "nombre": "💼 Categoría 2: Impacto en el Negocio",
-        "descripcion": "Medimos el valor real que generaría el agente para la organización.",
-        "peso": 0.25,
+        "id": "kpis",
+        "nombre": "📈 Categoría 2: Indicadores de Negocio (KPIs)",
+        "descripcion": "Evaluamos si la iniciativa tiene KPIs claros que el agente pueda impactar de forma medible. Sin un indicador de negocio definido, es imposible justificar la inversión ni medir el éxito.",
+        "peso": 0.23,
         "preguntas": [
             {
                 "id": "p2_1",
+                "texto": "¿Puedes identificar al menos un KPI de negocio concreto que el agente mejoraría?",
+                "opciones": [
+                    ("A", "Sí, tenemos KPIs definidos y medibles (ej: tasa de conversión, tiempo de ciclo, NPS, costo por transacción)", 4),
+                    ("B", "Tenemos una noción del beneficio pero aún no está formalizado como KPI medible", 2),
+                    ("C", "No, el beneficio es difuso o principalmente cualitativo ('mejorar la experiencia')", 0),
+                ],
+                "ayuda": "Ej. de KPIs válidos: reducir el tiempo de onboarding de 5 días a 1, aumentar resolución en primer contacto del 60% al 85%, reducir costo de procesamiento de $12 a $3 por ticket."
+            },
+            {
+                "id": "p2_2",
+                "texto": "¿A qué tipo de indicador de negocio impacta principalmente esta iniciativa?",
+                "opciones": [
+                    ("A", "Ingresos o crecimiento (conversión, retención, upsell, nuevos clientes)", 4),
+                    ("B", "Eficiencia operacional (reducción de costos, tiempo de proceso, errores)", 3),
+                    ("C", "Experiencia del cliente o empleado (NPS, satisfacción, tiempo de respuesta)", 3),
+                    ("D", "Cumplimiento o riesgo (reducción de incidentes, auditorías, penalizaciones)", 2),
+                ],
+                "ayuda": "Los agentes que impactan ingresos o eficiencia operacional directa tienen ROI más claro y aprobación más fácil. Impactos en experiencia o riesgo son igualmente válidos pero requieren más esfuerzo de medición."
+            },
+            {
+                "id": "p2_3",
+                "texto": "¿Sabes cuánto vale en términos económicos mejorar ese indicador?",
+                "opciones": [
+                    ("A", "Sí, tenemos una estimación de valor (ahorro en $ o % de mejora proyectada)", 4),
+                    ("B", "Sabemos que es significativo pero no tenemos el número exacto", 2),
+                    ("C", "No hemos calculado el valor económico del impacto", 0),
+                ],
+                "ayuda": "Ej: 'Automatizar este proceso ahorraría 3 horas/día × $25/hora × 250 días = $18.750 anuales'. Sin este cálculo es difícil priorizar el agente sobre otras iniciativas."
+            },
+            {
+                "id": "p2_4",
+                "texto": "¿En cuánto tiempo esperarías ver el impacto en esos indicadores?",
+                "opciones": [
+                    ("A", "En semanas desde el despliegue (impacto inmediato y medible)", 4),
+                    ("B", "En 1 a 3 meses (impacto a corto plazo)", 3),
+                    ("C", "En 3 a 12 meses (impacto a mediano plazo)", 2),
+                    ("D", "No está claro cuándo o cómo se vería el impacto", 0),
+                ],
+                "ayuda": "Iniciativas con impacto incierto o muy lejano en el tiempo tienen mayor riesgo de ser canceladas antes de demostrar valor."
+            },
+        ]
+    },
+    {
+        "id": "impacto",
+        "nombre": "💼 Categoría 3: Impacto Operacional",
+        "descripcion": "Medimos el valor operativo real que generaría el agente en el día a día del equipo.",
+        "peso": 0.20,
+        "preguntas": [
+            {
+                "id": "p3_1",
                 "texto": "¿Con qué frecuencia ocurre este proceso o necesidad en tu equipo?",
                 "opciones": [
                     ("A", "Muchas veces al día o de forma continua", 4),
@@ -76,7 +135,7 @@ CATEGORIAS = [
                 "ayuda": "Un agente para procesos muy infrecuentes raramente justifica la inversión en construcción y mantenimiento."
             },
             {
-                "id": "p2_2",
+                "id": "p3_2",
                 "texto": "¿Cuánto tiempo humano consume actualmente este proceso por ocurrencia?",
                 "opciones": [
                     ("A", "Más de 2 horas por ocurrencia", 4),
@@ -87,7 +146,7 @@ CATEGORIAS = [
                 "ayuda": "El ahorro potencial debe justificar el costo de construcción, pruebas y mantenimiento del agente."
             },
             {
-                "id": "p2_3",
+                "id": "p3_3",
                 "texto": "¿Cuál es el impacto de un error en este proceso?",
                 "opciones": [
                     ("A", "Bajo: errores son fáciles de detectar y corregir sin consecuencias graves", 4),
@@ -97,7 +156,7 @@ CATEGORIAS = [
                 "ayuda": "IMPORTANTE: Alta tolerancia al error favorece el agente. En procesos críticos (médicos, financieros, legales) se requiere supervisión humana constante."
             },
             {
-                "id": "p2_4",
+                "id": "p3_4",
                 "texto": "¿Cuántas personas en tu organización se beneficiarían del agente?",
                 "opciones": [
                     ("A", "Toda la empresa o un departamento grande (+50 personas)", 4),
@@ -111,12 +170,12 @@ CATEGORIAS = [
     },
     {
         "id": "viabilidad_tecnica",
-        "nombre": "⚙️ Categoría 3: Viabilidad Técnica",
+        "nombre": "⚙️ Categoría 4: Viabilidad Técnica",
         "descripcion": "Evaluamos si existen las condiciones técnicas para construir y operar el agente.",
-        "peso": 0.20,
+        "peso": 0.18,
         "preguntas": [
             {
-                "id": "p3_1",
+                "id": "p4_1",
                 "texto": "¿Los datos necesarios para que el agente trabaje están disponibles y accesibles?",
                 "opciones": [
                     ("A", "Sí, los datos están digitalizados, organizados y accesibles", 4),
@@ -126,7 +185,7 @@ CATEGORIAS = [
                 "ayuda": "Sin datos de calidad y accesibles, cualquier sistema de IA fracasará independientemente de su sofisticación."
             },
             {
-                "id": "p3_2",
+                "id": "p4_2",
                 "texto": "¿El equipo tiene o puede adquirir las capacidades técnicas para construir y mantener el agente?",
                 "opciones": [
                     ("A", "Sí, tenemos desarrolladores con experiencia o acceso a ellos", 4),
@@ -136,7 +195,7 @@ CATEGORIAS = [
                 "ayuda": "Un agente sin equipo técnico para mantenerlo se convierte en deuda tecnológica."
             },
             {
-                "id": "p3_3",
+                "id": "p4_3",
                 "texto": "¿El proceso puede integrarse con sistemas existentes (APIs, bases de datos, herramientas)?",
                 "opciones": [
                     ("A", "Sí, los sistemas existentes tienen APIs o integraciones disponibles", 4),
@@ -149,12 +208,12 @@ CATEGORIAS = [
     },
     {
         "id": "complejidad_alternativas",
-        "nombre": "🔄 Categoría 4: Complejidad vs. Alternativas",
+        "nombre": "🔄 Categoría 5: Complejidad vs. Alternativas",
         "descripcion": "Determinamos si el agente es la solución más adecuada o si existe algo más simple y efectivo.",
-        "peso": 0.20,
+        "peso": 0.12,
         "preguntas": [
             {
-                "id": "p4_1",
+                "id": "p5_1",
                 "texto": "¿Ya intentaron resolver este problema con automatizaciones simples (macros, scripts, RPA, workflows)?",
                 "opciones": [
                     ("A", "Sí, lo intentamos y quedaron casos no resueltos que requieren más inteligencia", 4),
@@ -164,7 +223,7 @@ CATEGORIAS = [
                 "ayuda": "Anthropic recomienda: 'Empieza simple. Solo añade complejidad cuando sea necesario.'"
             },
             {
-                "id": "p4_2",
+                "id": "p5_2",
                 "texto": "¿El proceso requiere interacción de múltiples turnos o conversación contextual con el usuario?",
                 "opciones": [
                     ("A", "Sí, necesita mantener contexto a lo largo de una conversación o sesión", 4),
@@ -174,7 +233,7 @@ CATEGORIAS = [
                 "ayuda": "Procesos de entrada-salida única raramente necesitan un agente completo."
             },
             {
-                "id": "p4_3",
+                "id": "p5_3",
                 "texto": "¿La solución necesita adaptarse en tiempo real a información nueva o cambiante?",
                 "opciones": [
                     ("A", "Sí, debe responder a cambios inesperados durante la ejecución", 4),
@@ -187,12 +246,12 @@ CATEGORIAS = [
     },
     {
         "id": "organizacion",
-        "nombre": "🏢 Categoría 5: Madurez y Cultura Organizacional",
+        "nombre": "🏢 Categoría 6: Madurez y Cultura Organizacional",
         "descripcion": "Evaluamos si la organización está lista para adoptar y confiar en un agente de IA.",
-        "peso": 0.10,
+        "peso": 0.05,
         "preguntas": [
             {
-                "id": "p5_1",
+                "id": "p6_1",
                 "texto": "¿La organización tiene experiencia previa con herramientas de automatización o IA?",
                 "opciones": [
                     ("A", "Sí, usamos herramientas de automatización/IA activamente", 4),
@@ -202,7 +261,7 @@ CATEGORIAS = [
                 "ayuda": "Organizaciones sin experiencia previa en automatización suelen tener dificultades de adopción y mantenimiento."
             },
             {
-                "id": "p5_2",
+                "id": "p6_2",
                 "texto": "¿Los usuarios finales del proceso están dispuestos a trabajar con o supervisar un agente de IA?",
                 "opciones": [
                     ("A", "Sí, hay entusiasmo y disposición por parte del equipo", 4),
